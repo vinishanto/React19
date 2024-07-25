@@ -5,24 +5,27 @@ import { useFormStatus } from "react-dom";
 export default function AddUser() {
   const [cacheId, setCacheId] = useState(1);
   const submitHandler = async (previousState, formData) => {
-    console.log("prev:", previousState, "formData", formData);
-    const body = {
-      name: formData.get("name"),
-      age: formData.get("age"),
-    };
-    console.log("body", body);
-    const response = await fetch("http://localhost:3000/users", {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    setCacheId(cacheId + 1);
-    return response.json();
+    try {
+      const body = {
+        name: formData.get("name"),
+        age: formData.get("age"),
+      };
+      console.log("body", body);
+      const response = await fetch("http://localhost:3001/users", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      setCacheId(cacheId + 1);
+      return response.json();
+    } catch (error) {
+      return { error: error.message };
+    }
   };
 
-  const [error, submitAction, isPending] = useActionState(submitHandler);
+  const [state, submitAction, isPending] = useActionState(submitHandler);
   const refreshCache = () => {
     setCacheId(cacheId + 1);
   };
@@ -39,12 +42,13 @@ export default function AddUser() {
         <div>
           Age: <input name="age" type="text" placeholder="Age" />
         </div>
-        <NestedSubmitButton />
+        {/* <NestedSubmitButton /> */}
         <div>
           <button disabled={isPending}>
             {isPending ? "Adding" : "Add User"}
           </button>
         </div>
+        {state?.error && <p>{state.error}</p>}
       </form>
     </div>
   );

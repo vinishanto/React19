@@ -6,7 +6,7 @@ export function UserItem({ user, refreshCache }) {
 
   const deleteHandler = (userId) => {
     startDeleteTransition(async () => {
-      const response = await fetch(`http://localhost:3000/users/${userId}`, {
+      const response = await fetch(`http://localhost:3001/users/${userId}`, {
         method: "DELETE",
       });
       refreshCache();
@@ -37,11 +37,11 @@ export default function UserList({ cacheId, refreshCache }) {
   }, [cacheId]);
 
   const getUserData = async() => {
-    // startFetchTransition(async () => {
-      const response = await fetch("http://localhost:3000/users");
+    startFetchTransition(async () => {
+      const response = await fetch("http://localhost:3001/users");
       const data = await response.json();
       setUsers(data);
-    // });
+    });
   };
 
   return false ? (
